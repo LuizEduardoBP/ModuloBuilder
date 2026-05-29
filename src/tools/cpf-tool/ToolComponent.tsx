@@ -1,40 +1,19 @@
-import React, { useState } from 'react';
-import * as utils from './toolUtils';
+import React from 'react';
+import { useTool } from './useTool';
 import { Copy, Check, RefreshCw, ShieldAlert, ShieldCheck, Clipboard } from 'lucide-react';
 
 export const ToolComponent: React.FC = () => {
-  const [generatedCpf, setGeneratedCpf] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [formatted, setFormatted] = useState(true);
-
-  // Validador
-  const [cpfInput, setCpfInput] = useState('');
-  const [isValid, setIsValid] = useState<boolean | null>(null);
-
-  const handleGenerate = () => {
-    const cpf = utils.generateCPF(formatted);
-    setGeneratedCpf(cpf);
-  };
-
-  const handleCopy = async () => {
-    if (!generatedCpf) return;
-    try {
-      await navigator.clipboard.writeText(generatedCpf);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleValidate = (val: string) => {
-    setCpfInput(val);
-    if (val.replace(/\D/g, '').length === 0) {
-      setIsValid(null);
-      return;
-    }
-    setIsValid(utils.validateCPF(val));
-  };
+  const {
+    generatedCpf,
+    copied,
+    formatted,
+    cpfInput,
+    isValid,
+    handleGenerate,
+    handleCopy,
+    handleValidate,
+    handleFormatToggle
+  } = useTool();
 
   return (
     <div className="space-y-6">
@@ -62,13 +41,7 @@ export const ToolComponent: React.FC = () => {
                 <input
                   type="checkbox"
                   checked={formatted}
-                  onChange={(e) => {
-                    setFormatted(e.target.checked);
-                    if (generatedCpf) {
-                      const clean = generatedCpf.replace(/\D/g, '');
-                      setGeneratedCpf(e.target.checked ? utils.formatCPF(clean) : clean);
-                    }
-                  }}
+                  onChange={(e) => handleFormatToggle(e.target.checked)}
                   className="rounded border-gray-700 bg-gray-800 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-gray-900 w-4 h-4"
                 />
                 Gerar com Pontuação

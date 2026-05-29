@@ -1,40 +1,19 @@
-import React, { useState } from 'react';
-import * as utils from './toolUtils';
+import React from 'react';
+import { useTool } from './useTool';
 import { Copy, Check, RefreshCw, ShieldAlert, ShieldCheck, Clipboard, Briefcase } from 'lucide-react';
 
 export const ToolComponent: React.FC = () => {
-  const [generatedCnpj, setGeneratedCnpj] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [formatted, setFormatted] = useState(true);
-
-  // Validador
-  const [cnpjInput, setCnpjInput] = useState('');
-  const [isValid, setIsValid] = useState<boolean | null>(null);
-
-  const handleGenerate = () => {
-    const cnpj = utils.generateCNPJ(formatted);
-    setGeneratedCnpj(cnpj);
-  };
-
-  const handleCopy = async () => {
-    if (!generatedCnpj) return;
-    try {
-      await navigator.clipboard.writeText(generatedCnpj);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleValidate = (val: string) => {
-    setCnpjInput(val);
-    if (val.replace(/\D/g, '').length === 0) {
-      setIsValid(null);
-      return;
-    }
-    setIsValid(utils.validateCNPJ(val));
-  };
+  const {
+    generatedCnpj,
+    copied,
+    formatted,
+    cnpjInput,
+    isValid,
+    handleGenerate,
+    handleCopy,
+    handleValidate,
+    handleFormatToggle
+  } = useTool();
 
   return (
     <div className="space-y-6">
@@ -62,13 +41,7 @@ export const ToolComponent: React.FC = () => {
                 <input
                   type="checkbox"
                   checked={formatted}
-                  onChange={(e) => {
-                    setFormatted(e.target.checked);
-                    if (generatedCnpj) {
-                      const clean = generatedCnpj.replace(/\D/g, '');
-                      setGeneratedCnpj(e.target.checked ? utils.formatCNPJ(clean) : clean);
-                    }
-                  }}
+                  onChange={(e) => handleFormatToggle(e.target.checked)}
                   className="rounded border-gray-700 bg-gray-800 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-gray-900 w-4 h-4"
                 />
                 Gerar com Pontuação
