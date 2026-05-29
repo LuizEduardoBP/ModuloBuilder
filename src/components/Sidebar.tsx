@@ -1,11 +1,10 @@
 import React from 'react';
 import type { ToolCategory } from '../types/tool';
 import { getAllTools } from '../registry';
-import { 
-  Layers, 
-  PlusCircle, 
-  CheckSquare, 
-  Binary, 
+import {
+  Layers,
+  FileText,
+  Binary,
   HelpCircle,
   Terminal
 } from 'lucide-react';
@@ -23,8 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const categories: { id: 'all' | ToolCategory; label: string; icon: React.ReactNode }[] = [
     { id: 'all', label: 'Todos os Módulos', icon: <Layers className="w-4 h-4" /> },
-    { id: 'geradores', label: 'Geradores', icon: <PlusCircle className="w-4 h-4" /> },
-    { id: 'validadores', label: 'Validadores', icon: <CheckSquare className="w-4 h-4" /> },
+    { id: 'documentos', label: 'Documentos', icon: <FileText className="w-4 h-4" /> },
     { id: 'formatadores', label: 'Formatadores', icon: <Binary className="w-4 h-4" /> },
     { id: 'outros', label: 'Outros', icon: <HelpCircle className="w-4 h-4" /> },
   ];
@@ -61,11 +59,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer ${
-                isActive
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer ${isActive
                   ? 'bg-indigo-600/10 border border-indigo-500/20 text-indigo-300'
                   : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3">
                 <span className={isActive ? 'text-indigo-400' : 'text-gray-500 group-hover:text-white transition-colors'}>
@@ -73,11 +70,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </span>
                 <span>{cat.label}</span>
               </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold transition-all ${
-                isActive 
-                  ? 'bg-indigo-500/20 text-indigo-300' 
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold transition-all ${isActive
+                  ? 'bg-indigo-500/20 text-indigo-300'
                   : 'bg-white/5 text-gray-500 group-hover:text-gray-300'
-              }`}>
+                }`}>
                 {count}
               </span>
             </button>

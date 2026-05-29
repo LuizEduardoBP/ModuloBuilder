@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ToolCategory = 'geradores' | 'validadores' | 'formatadores' | 'outros';
+export type ToolCategory = 'documentos' | 'formatadores' | 'outros';
 
 export interface ToolConfig {
   id: string;
