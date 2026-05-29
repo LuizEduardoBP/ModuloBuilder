@@ -104,18 +104,6 @@ function App() {
           ) : (
             /* Dashboard: Grid de Cards */
             <div className="max-w-6xl mx-auto space-y-8">
-              {/* Boas-vindas Banner */}
-              <div className="mt-5 relative overflow-hidden rounded-2xl border border-white/5 bg-linear-to-r from-indigo-950/40 via-purple-950/20 to-zinc-950 p-8 shadow-xl">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                <div className="relative z-10 space-y-2">
-                  <h2 className="text-3xl font-extrabold tracking-tight bg-linear-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-                    ModuloBuilder DevTools
-                  </h2>
-                  <p className="text-gray-400 max-w-2xl text-sm leading-relaxed">
-                    Plataforma unificada e modular de utilitários rápidos para desenvolvedores. Acesse ferramentas instantâneas de geração, validação.
-                  </p>
-                </div>
-              </div>
 
               {/* Grid das Ferramentas */}
               <div className="space-y-4">
