@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { pisConfig } from './pisConfig';
+import { pisToolComponent } from './pisToolComponent';
+import * as utils from './pisToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const pisToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: pisConfig,
+  Component: pisToolComponent,
   utils
 };

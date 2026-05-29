@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { pixConfig } from './pixConfig';
+import { pixToolComponent } from './pixToolComponent';
+import * as utils from './pixToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const pixToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: pixConfig,
+  Component: pixToolComponent,
   utils
 };

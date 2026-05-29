@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { rgConfig } from './rgConfig';
+import { rgToolComponent } from './rgToolComponent';
+import * as utils from './rgToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const rgToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: rgConfig,
+  Component: rgToolComponent,
   utils
 };

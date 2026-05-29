@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { hashConfig } from './hashConfig';
+import { hashToolComponent } from './hashToolComponent';
+import * as utils from './hashToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const hashToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: hashConfig,
+  Component: hashToolComponent,
   utils
 };

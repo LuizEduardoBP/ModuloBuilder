@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { genericConfig } from './genericConfig';
+import { genericToolComponent } from './genericToolComponent';
+import * as utils from './genericToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const genericToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: genericConfig,
+  Component: genericToolComponent,
   utils
 };

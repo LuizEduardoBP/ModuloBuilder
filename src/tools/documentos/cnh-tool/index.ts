@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { cnhConfig } from './cnhConfig';
+import { cnhToolComponent } from './cnhToolComponent';
+import * as utils from './cnhToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const cnhToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: cnhConfig,
+  Component: cnhToolComponent,
   utils
 };

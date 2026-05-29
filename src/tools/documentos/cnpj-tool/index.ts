@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { cnpjConfig } from './cnpjConfig';
+import { cnpjToolComponent } from './cnpjToolComponent';
+import * as utils from './cnpjToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const cnpjToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: cnpjConfig,
+  Component: cnpjToolComponent,
   utils
 };

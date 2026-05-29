@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { jsonConfig } from './jsonConfig';
+import { jsonToolComponent } from './jsonToolComponent';
+import * as utils from './jsonToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const jsonToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: jsonConfig,
+  Component: jsonToolComponent,
   utils
 };

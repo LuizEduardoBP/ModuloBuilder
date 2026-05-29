@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { cartaoConfig } from './cartaoConfig';
+import { cartaoToolComponent } from './cartaoToolComponent';
+import * as utils from './cartaoToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const cartaoToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: cartaoConfig,
+  Component: cartaoToolComponent,
   utils
 };

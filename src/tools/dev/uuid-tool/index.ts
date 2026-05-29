@@ -1,10 +1,10 @@
-import { config } from './config';
-import { ToolComponent } from './ToolComponent';
-import * as utils from './toolUtils';
+import { uuidConfig } from './uuidConfig';
+import { uuidToolComponent } from './uuidToolComponent';
+import * as utils from './uuidToolUtils';
 import type { ToolModule } from '../../../types/tool';
 
 export const uuidToolModule: ToolModule = {
-  config,
-  Component: ToolComponent,
+  config: uuidConfig,
+  Component: uuidToolComponent,
   utils
 };
