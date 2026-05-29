@@ -1,18 +1,22 @@
 import type { ToolModule } from './types/tool';
-import { genericToolModule } from './tools/generic-tool';
-import { cpfToolModule } from './tools/cpf-tool';
-import { cnpjToolModule } from './tools/cnpj-tool';
-import { jsonToolModule } from './tools/json-tool';
-import { cnhToolModule } from './tools/cnh-tool';
-import { tituloToolModule } from './tools/titulo-tool';
-import { pisToolModule } from './tools/pis-tool';
-import { rgToolModule } from './tools/rg-tool';
+import { genericToolModule } from './tools/dev/generic-tool';
+import { jsonToolModule } from './tools/dev/json-tool';
+import { hashToolModule } from './tools/dev/hash-tool';
+import { uuidToolModule } from './tools/dev/uuid-tool';
+import { cpfToolModule } from './tools/documentos/cpf-tool';
+import { cnpjToolModule } from './tools/documentos/cnpj-tool';
+import { cnhToolModule } from './tools/documentos/cnh-tool';
+import { tituloToolModule } from './tools/documentos/titulo-tool';
+import { pisToolModule } from './tools/documentos/pis-tool';
+import { rgToolModule } from './tools/documentos/rg-tool';
 
 export const toolRegistry: Record<string, ToolModule> = {
   [genericToolModule.config.id]: genericToolModule,
+  [jsonToolModule.config.id]: jsonToolModule,
+  [hashToolModule.config.id]: hashToolModule,
+  [uuidToolModule.config.id]: uuidToolModule,
   [cpfToolModule.config.id]: cpfToolModule,
   [cnpjToolModule.config.id]: cnpjToolModule,
-  [jsonToolModule.config.id]: jsonToolModule,
   [cnhToolModule.config.id]: cnhToolModule,
   [tituloToolModule.config.id]: tituloToolModule,
   [pisToolModule.config.id]: pisToolModule,

@@ -4,7 +4,6 @@ import { getAllTools } from '../registry';
 import {
   Layers,
   FileText,
-  Binary,
   HelpCircle,
   Terminal
 } from 'lucide-react';
@@ -23,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const categories: { id: 'all' | ToolCategory; label: string; icon: React.ReactNode }[] = [
     { id: 'all', label: 'Todos os Módulos', icon: <Layers className="w-4 h-4" /> },
     { id: 'documentos', label: 'Documentos', icon: <FileText className="w-4 h-4" /> },
-    { id: 'formatadores', label: 'Formatadores', icon: <Binary className="w-4 h-4" /> },
+    { id: 'dev', label: 'Utilitários Dev', icon: <Terminal className="w-4 h-4" /> },
     { id: 'outros', label: 'Outros', icon: <HelpCircle className="w-4 h-4" /> },
   ];
 
