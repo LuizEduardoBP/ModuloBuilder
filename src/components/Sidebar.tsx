@@ -5,7 +5,9 @@ import {
   Layers,
   FileText,
   HelpCircle,
-  Terminal
+  Terminal,
+  CreditCard,
+  MapPin
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -23,6 +25,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'all', label: 'Todos os Módulos', icon: <Layers className="w-4 h-4" /> },
     { id: 'documentos', label: 'Documentos', icon: <FileText className="w-4 h-4" /> },
     { id: 'dev', label: 'Utilitários Dev', icon: <Terminal className="w-4 h-4" /> },
+    { id: 'financeiro', label: 'Dados Financeiros', icon: <CreditCard className="w-4 h-4" /> },
+    { id: 'localizacao', label: 'Localização', icon: <MapPin className="w-4 h-4" /> },
     { id: 'outros', label: 'Outros', icon: <HelpCircle className="w-4 h-4" /> },
   ];
 

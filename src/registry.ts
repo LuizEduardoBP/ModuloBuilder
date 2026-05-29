@@ -9,6 +9,9 @@ import { cnhToolModule } from './tools/documentos/cnh-tool';
 import { tituloToolModule } from './tools/documentos/titulo-tool';
 import { pisToolModule } from './tools/documentos/pis-tool';
 import { rgToolModule } from './tools/documentos/rg-tool';
+import { pixToolModule } from './tools/financeiro/pix-tool';
+import { cartaoToolModule } from './tools/financeiro/cartao-tool';
+import { cepToolModule } from './tools/localizacao/cep-tool';
 
 export const toolRegistry: Record<string, ToolModule> = {
   [genericToolModule.config.id]: genericToolModule,
@@ -21,6 +24,9 @@ export const toolRegistry: Record<string, ToolModule> = {
   [tituloToolModule.config.id]: tituloToolModule,
   [pisToolModule.config.id]: pisToolModule,
   [rgToolModule.config.id]: rgToolModule,
+  [pixToolModule.config.id]: pixToolModule,
+  [cartaoToolModule.config.id]: cartaoToolModule,
+  [cepToolModule.config.id]: cepToolModule,
 };
 
 export const getToolById = (id: string): ToolModule | undefined => {
