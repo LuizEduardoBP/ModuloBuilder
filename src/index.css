@@ -1,12 +1,37 @@
 @import "tailwindcss";
 
+@theme {
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-card: var(--theme-card);
+  --color-theme-border: var(--theme-border);
+  --color-theme-text: var(--theme-text);
+  --color-theme-text-muted: var(--theme-text-muted);
+  --color-theme-brand: var(--theme-brand);
+  --color-theme-brand-hover: var(--theme-brand-hover);
+  --color-theme-brand-light: var(--theme-brand-light);
+  --color-theme-brand-border: var(--theme-brand-border);
+
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-slide-in: slide-in 0.2s ease-out;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-in {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+}
+
 @layer base {
   body {
-    background-color: #09090b; /* zinc-950 */
-    color: #f4f4f5; /* zinc-100 */
+    background-color: var(--theme-bg, #09090b);
+    color: var(--theme-text, #f4f4f5);
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
 
   /* Custom styling for sleek dark scrollbars */
@@ -22,6 +47,7 @@
   ::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 9999px;
+    transition: background-color 0.2s ease;
   }
   
   ::-webkit-scrollbar-thumb:hover {
