@@ -9,33 +9,9 @@ import {
   CreditCard,
   MapPin,
   X,
-  Palette,
-  Leaf,
-  Flame,
-  Crown,
-  ShieldAlert,
-  Sun,
-  Moon,
-  ChevronDown,
-  ChevronUp
 } from 'lucide-react';
 import { themes, type ThemeId } from '../styles/colors';
-
-// Mapeador de ícones para temas
-const ThemeIcon = ({ name, className }: { name: string; className?: string }) => {
-  const iconsMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    Terminal,
-    Leaf,
-    Flame,
-    Crown,
-    Layers,
-    ShieldAlert,
-    Sun,
-    Moon
-  };
-  const IconComponent = iconsMap[name] || Palette;
-  return <IconComponent className={className} />;
-};
+import { BrandLogo } from './BrandLogo';
 
 interface SidebarProps {
   selectedCategory: 'all' | ToolCategory;
@@ -52,11 +28,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentThemeId,
   onSelectTheme,
   isMobile = false,
-  onClose
+  onClose,
 }) => {
   const tools = getAllTools();
-  const [isThemeExpanded, setIsThemeExpanded] = React.useState(false);
-  const activeTheme = themes.find(t => t.id === currentThemeId) || themes[0];
+  const activeTheme = themes.find((t) => t.id === currentThemeId) || themes[0];
 
   const categories: { id: 'all' | ToolCategory; label: string; icon: React.ReactNode }[] = [
     { id: 'all', label: 'Todos os Módulos', icon: <Layers className="w-4 h-4" /> },
@@ -69,65 +44,89 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const getCount = (catId: 'all' | ToolCategory) => {
     if (catId === 'all') return tools.length;
-    return tools.filter(t => t.config.category === catId).length;
+    return tools.filter((t) => t.config.category === catId).length;
   };
 
+  const visibleCategories = categories.filter(
+    (cat) => cat.id === 'all' || getCount(cat.id) > 0
+  );
+
   return (
-    <aside className="w-64 bg-theme-card border-r border-theme-border flex flex-col h-full backdrop-blur-xl transition-all duration-300">
-      
+    <aside className="w-64 bg-theme-card border-r border-theme-border flex flex-col h-full transition-colors duration-200">
       {/* Brand Header */}
-      <div className="p-6 border-b border-theme-border flex items-center justify-between">
+      <div className="h-16 px-5 border-b border-theme-border flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-theme-brand-light rounded-lg border border-theme-brand-border text-theme-brand transition-colors duration-300">
-            <Terminal className="w-5 h-5 animate-pulse" />
-          </div>
-          <div>
-            <h1 className="text-md font-bold text-theme-text tracking-wide transition-colors">ModuloBuilder</h1>
-            <span className="text-[10px] font-semibold tracking-wider text-theme-brand uppercase">DevTools Platform</span>
+          <BrandLogo className="w-7 h-7 shrink-0" />
+          <div className="leading-tight">
+            <h1 className="font-display text-base font-bold text-theme-text tracking-tight">
+              ModuloBuilder
+            </h1>
+            <span className="font-mono text-[10px] font-medium tracking-wider text-theme-text-subtle uppercase block">
+              Bancada de QA
+            </span>
           </div>
         </div>
 
-        {/* Botão de Fechar no Mobile */}
         {isMobile && (
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-white/5 border border-transparent hover:border-theme-border text-theme-text-muted hover:text-theme-text transition-all cursor-pointer"
+            className="p-1.5 rounded-md hover:bg-theme-inset text-theme-text-muted hover:text-theme-text transition-colors cursor-pointer"
             title="Fechar Menu"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-        <span className="px-3 text-[10px] font-semibold text-theme-text-muted/60 tracking-wider uppercase block mb-3">
-          CATEGORIAS
+      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+        <span className="px-3 text-[10px] font-mono font-semibold text-theme-text-subtle tracking-widest uppercase block mb-2.5">
+          Categorias
         </span>
 
-        {categories.map((cat) => {
+        {visibleCategories.map((cat) => {
           const isActive = selectedCategory === cat.id;
           const count = getCount(cat.id);
 
           return (
             <button
               key={cat.id}
+              type="button"
               onClick={() => onSelectCategory(cat.id)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all group cursor-pointer ${isActive
-                  ? 'bg-theme-brand-light border border-theme-brand-border text-theme-brand'
-                  : 'text-theme-text-muted hover:text-theme-text hover:bg-white/5 border border-transparent'
-                }`}
+              className={`relative w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors duration-150 group cursor-pointer ${
+                isActive
+                  ? 'bg-theme-brand-light text-theme-text font-semibold'
+                  : 'text-theme-text-muted hover:text-theme-text hover:bg-theme-inset font-medium'
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <span className={isActive ? 'text-theme-brand' : 'text-theme-text-muted/60 group-hover:text-theme-text transition-colors'}>
+              {isActive && (
+                <span
+                  className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-r bg-theme-brand"
+                  aria-hidden="true"
+                />
+              )}
+
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span
+                  className={
+                    isActive
+                      ? 'text-theme-brand'
+                      : 'text-theme-text-subtle group-hover:text-theme-text transition-colors'
+                  }
+                >
                   {cat.icon}
                 </span>
-                <span>{cat.label}</span>
+                <span className="truncate">{cat.label}</span>
               </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold transition-all ${isActive
-                  ? 'bg-theme-brand/20 text-theme-brand'
-                  : 'bg-white/5 text-theme-text-muted/50 group-hover:text-theme-text-muted'
-                }`}>
+
+              <span
+                className={`font-mono text-[11px] px-1.5 py-0.5 rounded transition-colors ${
+                  isActive
+                    ? 'text-theme-brand font-semibold'
+                    : 'text-theme-text-subtle group-hover:text-theme-text-muted'
+                }`}
+              >
                 {count}
               </span>
             </button>
@@ -135,66 +134,67 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Seletor de Temas */}
-      <div className="p-4 border-t border-theme-border bg-black/10 transition-all duration-300">
-        <button
-          onClick={() => setIsThemeExpanded(!isThemeExpanded)}
-          className="w-full flex items-center justify-between px-2 py-1 rounded hover:bg-white/5 border border-transparent hover:border-theme-border/20 transition-all text-left cursor-pointer"
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="p-1.5 bg-theme-brand-light rounded border border-theme-brand-border text-theme-brand">
-              <ThemeIcon name={activeTheme.icon} className="w-4 h-4" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] font-semibold text-theme-text-muted/60 tracking-wider uppercase leading-none mb-1">
-                TEMA ATUAL
-              </span>
-              <span className="text-[11px] font-bold text-theme-text leading-none">
-                {activeTheme.name}
-              </span>
-            </div>
-          </div>
-          {isThemeExpanded ? (
-            <ChevronUp className="w-4 h-4 text-theme-text-muted" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-theme-text-muted" />
-          )}
-        </button>
+      {/* Seletor de Temas em 1 clique */}
+      <div className="p-4 border-t border-theme-border space-y-3 bg-theme-inset/50">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[10px] font-semibold text-theme-text-subtle uppercase tracking-wider">
+            Tema
+          </span>
+          <span className="text-xs font-medium text-theme-text">
+            {activeTheme.name}{' '}
+            <span className="text-theme-text-subtle font-normal">
+              · {activeTheme.description}
+            </span>
+          </span>
+        </div>
 
-        {isThemeExpanded && (
-          <div className="grid grid-cols-2 gap-2 mt-4 animate-fade-in">
-            {themes.map((t) => {
-              const isSelected = currentThemeId === t.id;
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => onSelectTheme(t.id)}
-                  className={`flex items-center gap-2 px-2.5 py-2 rounded-lg text-[11px] font-medium border transition-all cursor-pointer group text-left ${isSelected
-                    ? 'bg-theme-brand-light border-theme-brand-border text-theme-brand font-semibold'
-                    : 'bg-white/5 border-transparent text-theme-text-muted hover:text-theme-text hover:border-theme-border'
-                  }`}
-                  title={t.name}
+        <div className="grid grid-cols-4 gap-2" role="radiogroup" aria-label="Selecionar tema">
+          {themes.map((t) => {
+            const isSelected = currentThemeId === t.id;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                onClick={() => onSelectTheme(t.id)}
+                title={`${t.name} (${t.description})`}
+                className={`group flex flex-col items-center gap-1.5 p-1.5 rounded-md border transition-all duration-150 cursor-pointer ${
+                  isSelected
+                    ? 'bg-theme-card border-theme-brand shadow-xs'
+                    : 'bg-transparent border-theme-border hover:border-theme-border-strong'
+                }`}
+              >
+                <span
+                  className="w-6 h-6 rounded-full border border-black/15 flex items-center justify-center overflow-hidden"
+                  style={{ backgroundColor: t.preview.bg }}
                 >
-                  <ThemeIcon 
-                    name={t.icon} 
-                    className={`w-3.5 h-3.5 transition-all shrink-0 ${isSelected ? 'text-theme-brand' : 'text-theme-text-muted/60 group-hover:text-theme-text'}`} 
+                  <span
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: t.preview.brand }}
                   />
-                  <span className="truncate">{t.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
+                </span>
+                <span
+                  className={`text-[10px] leading-none truncate w-full text-center ${
+                    isSelected
+                      ? 'text-theme-text font-semibold'
+                      : 'text-theme-text-muted'
+                  }`}
+                >
+                  {t.name}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Footer Info */}
-      <div className="p-4 border-t border-theme-border bg-black/20 text-center">
-        <div className="text-[11px] text-theme-text-muted">
-          Atalho Rápido:{' '}
-          <kbd className="bg-white/5 text-theme-text px-1.5 py-0.5 rounded border border-theme-border text-[10px] font-mono shadow-sm">
-            Ctrl + K
-          </kbd>
-        </div>
+      <div className="px-4 py-3 border-t border-theme-border flex items-center justify-between text-[11px] text-theme-text-subtle">
+        <span>Busca rápida</span>
+        <kbd className="bg-theme-inset text-theme-text-muted px-1.5 py-0.5 rounded border border-theme-border text-[10px] font-mono">
+          Ctrl + K
+        </kbd>
       </div>
     </aside>
   );

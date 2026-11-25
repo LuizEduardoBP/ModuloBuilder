@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getAllTools } from '../registry';
-import { Search, Command, ArrowRight } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
+import { ToolIcon } from './ToolIcon';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -8,10 +9,18 @@ interface CommandPaletteProps {
   onSelectTool: (id: string) => void;
 }
 
+const CATEGORY_LABELS: Record<string, string> = {
+  documentos: 'Documentos',
+  dev: 'Dev',
+  financeiro: 'Financeiro',
+  localizacao: 'Localização',
+  outros: 'Outros',
+};
+
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
   isOpen,
   onClose,
-  onSelectTool
+  onSelectTool,
 }) => {
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -20,26 +29,24 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   const tools = getAllTools();
 
-  // Filtra as ferramentas com base no termo digitado
-  const filteredTools = tools.filter(tool => {
+  const filteredTools = tools.filter((tool) => {
     const term = search.toLowerCase();
     return (
       tool.config.name.toLowerCase().includes(term) ||
       tool.config.description.toLowerCase().includes(term) ||
-      tool.config.keywords.some(kw => kw.toLowerCase().includes(term))
+      tool.config.category.toLowerCase().includes(term) ||
+      tool.config.keywords.some((kw) => kw.toLowerCase().includes(term))
     );
   });
 
-  // Foco no input ao abrir
   useEffect(() => {
     if (isOpen) {
       setSearch('');
       setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
+      setTimeout(() => inputRef.current?.focus(), 40);
     }
   }, [isOpen]);
 
-  // Fecha ao clicar fora
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -52,17 +59,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen, onClose]);
 
-  // Atalhos de teclado dentro da paleta
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelectedIndex(prev => (prev + 1) % Math.max(1, filteredTools.length));
+        setSelectedIndex((prev) => (prev + 1) % Math.max(1, filteredTools.length));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedIndex(prev => (prev - 1 + filteredTools.length) % Math.max(1, filteredTools.length));
+        setSelectedIndex(
+          (prev) => (prev - 1 + filteredTools.length) % Math.max(1, filteredTools.length)
+        );
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (filteredTools[selectedIndex]) {
@@ -82,14 +90,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div 
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[14vh] px-4 bg-black/50 backdrop-blur-[2px] animate-fade-in">
+      <div
         ref={containerRef}
-        className="w-full max-w-lg bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[400px] animate-in zoom-in-95 duration-200"
+        className="w-full max-w-xl bg-theme-card border border-theme-border-strong rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[440px]"
       >
         {/* Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/5 bg-zinc-950/40">
-          <Search className="w-5 h-5 text-gray-500" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-theme-border bg-theme-inset/60">
+          <Search className="w-4 h-4 text-theme-text-subtle shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -98,10 +106,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               setSearch(e.target.value);
               setSelectedIndex(0);
             }}
-            placeholder="Digite para buscar qualquer ferramenta..."
-            className="flex-1 bg-transparent text-white placeholder-gray-500 focus:outline-none text-sm"
+            placeholder="Ir para módulo (ex: cpf, json, pix, cep)..."
+            className="flex-1 bg-transparent text-theme-text placeholder-theme-text-subtle focus:outline-none text-sm"
           />
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 bg-zinc-800 text-[10px] text-gray-400 border border-white/5 rounded px-1.5 py-0.5 font-mono shadow">
+          <kbd className="hidden sm:inline-flex items-center bg-theme-card text-[10px] text-theme-text-muted border border-theme-border rounded px-1.5 py-0.5 font-mono">
             ESC
           </kbd>
         </div>
@@ -114,56 +122,71 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               return (
                 <button
                   key={tool.config.id}
+                  type="button"
+                  onMouseEnter={() => setSelectedIndex(index)}
                   onClick={() => {
                     onSelectTool(tool.config.id);
                     onClose();
                   }}
-                  className={`w-full text-left flex items-center justify-between p-3 rounded-xl transition-all cursor-pointer ${
-                    isSelected 
-                      ? 'bg-indigo-600/10 border border-indigo-500/35 text-indigo-100 shadow-md shadow-indigo-600/5' 
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white border border-transparent'
+                  className={`w-full text-left flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg transition-colors duration-100 cursor-pointer border ${
+                    isSelected
+                      ? 'bg-theme-brand-light border-theme-brand-border text-theme-text'
+                      : 'text-theme-text-muted hover:bg-theme-inset border-transparent'
                   }`}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <div className={`p-2 rounded-lg border transition-all ${
-                      isSelected 
-                        ? 'bg-indigo-500/20 border-indigo-400/20 text-indigo-300' 
-                        : 'bg-white/5 border-white/5 text-gray-500'
-                    }`}>
-                      <Command className="w-4 h-4" />
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className={`p-2 rounded-md border shrink-0 transition-colors ${
+                        isSelected
+                          ? 'bg-theme-card border-theme-brand-border text-theme-brand'
+                          : 'bg-theme-inset border-theme-border text-theme-text-muted'
+                      }`}
+                    >
+                      <ToolIcon name={tool.config.icon} className="w-4 h-4" />
                     </div>
-                    <div>
-                      <h4 className={`text-sm font-semibold ${isSelected ? 'text-indigo-200' : 'text-gray-200'}`}>
-                        {tool.config.name}
-                      </h4>
-                      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-sm font-semibold text-theme-text truncate">
+                          {tool.config.name}
+                        </h4>
+                        <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-theme-inset border border-theme-border text-theme-text-subtle shrink-0">
+                          {CATEGORY_LABELS[tool.config.category] || tool.config.category}
+                        </span>
+                      </div>
+                      <p className="text-xs text-theme-text-muted mt-0.5 line-clamp-1">
                         {tool.config.description}
                       </p>
                     </div>
                   </div>
                   {isSelected && (
-                    <ArrowRight className="w-4 h-4 text-indigo-400 animate-pulse" />
+                    <ArrowRight className="w-4 h-4 text-theme-brand shrink-0" />
                   )}
                 </button>
               );
             })
           ) : (
-            <div className="p-8 text-center text-gray-500 text-sm">
-              Nenhuma ferramenta encontrada para &ldquo;{search}&rdquo;
+            <div className="py-10 px-4 text-center text-theme-text-muted text-sm">
+              Nenhum módulo encontrado para &ldquo;{search}&rdquo;.
             </div>
           )}
         </div>
 
-        {/* Action Help Bar */}
-        <div className="px-4 py-2 bg-zinc-950/40 border-t border-white/5 text-[11px] text-gray-500 flex justify-between items-center">
+        {/* Footer Help */}
+        <div className="px-4 py-2 bg-theme-inset/60 border-t border-theme-border text-[11px] text-theme-text-subtle flex justify-between items-center">
           <span className="flex items-center gap-1.5">
-            Navegar: 
-            <kbd className="bg-zinc-800 border border-white/5 px-1 py-0.5 rounded text-[9px] font-mono font-bold">↑</kbd>
-            <kbd className="bg-zinc-800 border border-white/5 px-1 py-0.5 rounded text-[9px] font-mono font-bold">↓</kbd>
+            Navegar:
+            <kbd className="bg-theme-card border border-theme-border px-1.5 py-0.5 rounded text-[10px] font-mono text-theme-text-muted">
+              ↑
+            </kbd>
+            <kbd className="bg-theme-card border border-theme-border px-1.5 py-0.5 rounded text-[10px] font-mono text-theme-text-muted">
+              ↓
+            </kbd>
           </span>
           <span className="flex items-center gap-1.5">
-            Selecionar: 
-            <kbd className="bg-zinc-800 border border-white/5 px-1 py-0.5 rounded text-[9px] font-mono font-bold">↵ Enter</kbd>
+            Abrir:
+            <kbd className="bg-theme-card border border-theme-border px-1.5 py-0.5 rounded text-[10px] font-mono text-theme-text-muted">
+              Enter
+            </kbd>
           </span>
         </div>
       </div>

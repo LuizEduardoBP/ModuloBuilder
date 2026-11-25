@@ -1,6 +1,24 @@
 import React from 'react';
 import { cartaoUseTool } from './cartaoUseTool';
-import { Copy, Check, RefreshCw, RotateCcw, CreditCard, ShieldAlert } from 'lucide-react';
+import { Copy, Check, RefreshCw, RotateCcw } from 'lucide-react';
+import { ToolHeader } from '../../../components/ui/ToolHeader';
+import { Panel } from '../../../components/ui/Panel';
+import { Button } from '../../../components/ui/Button';
+import type { CardBrand } from './cartaoToolUtils';
+
+const BRANDS: readonly { id: CardBrand; label: string }[] = [
+  { id: 'visa', label: 'Visa' },
+  { id: 'mastercard', label: 'Mastercard' },
+  { id: 'amex', label: 'Amex' },
+  { id: 'elo', label: 'Elo' },
+];
+
+const CARD_SURFACE: Record<CardBrand, string> = {
+  visa: 'bg-[#172844] border-[#2B436B]',
+  mastercard: 'bg-[#261D1A] border-[#4A362F]',
+  amex: 'bg-[#142D28] border-[#255249]',
+  elo: 'bg-[#222220] border-[#3F3E3A]',
+};
 
 export const cartaoToolComponent: React.FC = () => {
   const {
@@ -17,206 +35,191 @@ export const cartaoToolComponent: React.FC = () => {
     handleClear,
     setCopiedNumber,
     setCopiedCvv,
-    setCopiedExpiry
+    setCopiedExpiry,
   } = cartaoUseTool();
-
-  // Mapeamento de cores de cartão por bandeira
-  const getCardBg = () => {
-    switch (selectedBrand) {
-      case 'visa':
-        return 'from-blue-600 to-indigo-900';
-      case 'mastercard':
-        return 'from-amber-600 to-rose-900';
-      case 'amex':
-        return 'from-emerald-600 to-teal-900';
-      case 'elo':
-      default:
-        return 'from-purple-600 to-indigo-950';
-    }
-  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-            <CreditCard className="w-7 h-7 text-indigo-400" />
-            Gerador de Cartão de Crédito
-          </h2>
-          <p className="text-gray-400 text-sm mt-1">
-            Gere dados de cartões de crédito fictícios matematicamente válidos (Luhn) para homologação de gateways de pagamento.
-          </p>
-        </div>
+      <ToolHeader
+        icon="CreditCard"
+        title="Gerador de Cartão de Crédito"
+        description="Gere dados fictícios matematicamente válidos pelo algoritmo de Luhn para homologação de gateways."
+        actions={
+          card ? (
+            <Button variant="secondary" size="sm" onClick={handleClear}>
+              <RotateCcw className="w-3.5 h-3.5" />
+              Limpar
+            </Button>
+          ) : undefined
+        }
+      />
 
-        {card && (
-          <button
-            onClick={handleClear}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-300 hover:text-white transition-all cursor-pointer font-semibold"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            Limpar
-          </button>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Painel de Controles */}
-        <div className="lg:col-span-1 bg-zinc-900/50 border border-white/5 rounded-2xl p-6 space-y-4 flex flex-col justify-between">
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
-              Bandeira do Cartão
-            </h3>
-
-            <div className="grid grid-cols-2 gap-2">
-              {(['visa', 'mastercard', 'amex', 'elo'] as const).map((b) => (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <Panel title="Bandeira do Cartão" className="lg:col-span-1 justify-between gap-5">
+          <div className="grid grid-cols-2 gap-2">
+            {BRANDS.map((b) => {
+              const isSelected = selectedBrand === b.id;
+              return (
                 <button
-                  key={b}
-                  onClick={() => setSelectedBrand(b)}
-                  className={`py-2 px-3 border rounded-xl text-xs font-semibold capitalize transition-all cursor-pointer ${
-                    selectedBrand === b
-                      ? 'bg-indigo-600/10 border-indigo-500 text-indigo-300'
-                      : 'border-white/5 bg-black/20 text-gray-400 hover:text-white hover:bg-white/5'
+                  key={b.id}
+                  type="button"
+                  onClick={() => setSelectedBrand(b.id)}
+                  className={`py-2.5 px-3 border rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-theme-brand-light border-theme-brand-border text-theme-brand'
+                      : 'bg-theme-inset border-theme-border text-theme-text-muted hover:text-theme-text hover:border-theme-border-strong'
                   }`}
                 >
-                  {b}
+                  {b.label}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          <button
-            onClick={handleGenerate}
-            className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer mt-4"
-          >
+          <Button onClick={handleGenerate} fullWidth size="lg">
             <RefreshCw className="w-4 h-4" />
             Gerar Cartão Válido
-          </button>
-        </div>
+          </Button>
+        </Panel>
 
-        {/* Mockup do Cartão Visual */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            
-            {/* Visual Card Card */}
-            <div className="md:col-span-3 flex justify-center">
-              <div className={`w-full max-w-[340px] aspect-[1.586] bg-gradient-to-br ${getCardBg()} rounded-2xl p-6 shadow-2xl flex flex-col justify-between relative overflow-hidden border border-white/10 select-none animate-in zoom-in-95 duration-200`}>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent_60%)] pointer-events-none"></div>
-                
-                {/* Top Row: Chip and Brand */}
-                <div className="flex justify-between items-start">
-                  {/* Microchip */}
-                  <div className="w-10 h-8 bg-amber-400/80 rounded-md border border-amber-300/40 relative overflow-hidden flex flex-col justify-between p-1.5 shadow">
-                    <div className="h-[2px] bg-amber-600/30 w-full rounded"></div>
-                    <div className="flex justify-between w-full h-[6px]">
-                      <div className="w-[10px] bg-amber-600/30 rounded-sm"></div>
-                      <div className="w-[10px] bg-amber-600/30 rounded-sm"></div>
-                    </div>
-                    <div className="h-[2px] bg-amber-600/30 w-full rounded"></div>
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-5 gap-5">
+          {/* Cartão Visual Editorial Fosco */}
+          <div className="md:col-span-3 flex items-center justify-center">
+            <div
+              className={`w-full max-w-[350px] aspect-[1.586] rounded-xl p-6 border shadow-lg flex flex-col justify-between relative overflow-hidden select-none transition-colors duration-200 ${CARD_SURFACE[selectedBrand]}`}
+            >
+              {/* Micro-textura geométrica sutil */}
+              <div
+                className="absolute inset-0 opacity-15 pointer-events-none"
+                style={{
+                  backgroundImage:
+                    'radial-gradient(circle at 85% 15%, rgba(255,255,255,0.25), transparent 55%)',
+                }}
+              />
+
+              <div className="relative flex justify-between items-start">
+                <div className="w-10 h-7 bg-[#D8B467] rounded border border-[#EBD296]/50 flex flex-col justify-between p-1">
+                  <div className="h-[1.5px] bg-[#8E6F2E]/50 w-full" />
+                  <div className="flex justify-between gap-1 h-2">
+                    <div className="flex-1 border border-[#8E6F2E]/40 rounded-[1px]" />
+                    <div className="flex-1 border border-[#8E6F2E]/40 rounded-[1px]" />
                   </div>
-
-                  {/* Brand name */}
-                  <span className="text-sm font-black tracking-widest text-white/90 uppercase italic">
-                    {selectedBrand}
-                  </span>
+                  <div className="h-[1.5px] bg-[#8E6F2E]/50 w-full" />
                 </div>
 
-                {/* Card Number */}
-                <div className="space-y-1">
-                  <span className="text-xs text-white/40 tracking-wider font-semibold block">NÚMERO DO CARTÃO</span>
-                  <span className="text-lg md:text-xl font-mono font-bold tracking-widest text-white block">
-                    {card ? card.formattedNumber : '•••• •••• •••• ••••'}
+                <span className="font-display text-xs font-bold tracking-[0.2em] text-white/90 uppercase">
+                  {selectedBrand}
+                </span>
+              </div>
+
+              <div className="relative space-y-1">
+                <span className="font-mono text-[9px] text-white/50 tracking-widest uppercase block">
+                  Número do Cartão
+                </span>
+                <span className="text-lg sm:text-xl font-mono font-semibold tracking-widest text-white block">
+                  {card ? card.formattedNumber : '•••• •••• •••• ••••'}
+                </span>
+              </div>
+
+              <div className="relative flex justify-between items-end">
+                <div>
+                  <span className="font-mono text-[9px] text-white/50 tracking-wider uppercase block">
+                    Validade
+                  </span>
+                  <span className="font-mono text-sm font-semibold text-white">
+                    {card ? card.expiry : 'MM/AA'}
                   </span>
                 </div>
-
-                {/* Bottom Row: Expiry and CVV */}
-                <div className="flex justify-between items-end">
-                  <div>
-                    <span className="text-[9px] text-white/40 font-bold block">VALIDADE</span>
-                    <span className="font-mono text-sm font-bold text-white">
-                      {card ? card.expiry : 'MM/AA'}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] text-white/40 font-bold block">CVV</span>
-                    <span className="font-mono text-sm font-bold text-white">
-                      {card ? card.cvv : '•••'}
-                    </span>
-                  </div>
+                <div className="text-right">
+                  <span className="font-mono text-[9px] text-white/50 tracking-wider uppercase block">
+                    CVV
+                  </span>
+                  <span className="font-mono text-sm font-semibold text-white">
+                    {card ? card.cvv : '•••'}
+                  </span>
                 </div>
               </div>
             </div>
-
-            {/* Ações e Copiador de Dados */}
-            <div className="md:col-span-2 flex flex-col justify-between space-y-4">
-              {card ? (
-                <div className="space-y-3">
-                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Copiar Dados Individuais
-                  </h4>
-
-                  {/* Número */}
-                  <div className="bg-black/40 border border-white/5 rounded-xl px-3 py-2.5 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-[9px] text-gray-500 font-bold">NÚMERO</span>
-                      <span className="font-mono text-xs text-indigo-200">{card.number}</span>
-                    </div>
-                    <button
-                      onClick={() => handleCopy(card.number, setCopiedNumber)}
-                      className="p-1.5 rounded bg-indigo-500/10 hover:bg-indigo-500/25 border border-indigo-500/20 text-indigo-300 hover:text-white transition-all cursor-pointer"
-                    >
-                      {copiedNumber ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-
-                  {/* Validade */}
-                  <div className="bg-black/40 border border-white/5 rounded-xl px-3 py-2.5 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-[9px] text-gray-500 font-bold">VALIDADE</span>
-                      <span className="font-mono text-xs text-indigo-200">{card.expiry}</span>
-                    </div>
-                    <button
-                      onClick={() => handleCopy(card.expiry, setCopiedExpiry)}
-                      className="p-1.5 rounded bg-indigo-500/10 hover:bg-indigo-500/25 border border-indigo-500/20 text-indigo-300 hover:text-white transition-all cursor-pointer"
-                    >
-                      {copiedExpiry ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-
-                  {/* CVV */}
-                  <div className="bg-black/40 border border-white/5 rounded-xl px-3 py-2.5 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-[9px] text-gray-500 font-bold">CVV</span>
-                      <span className="font-mono text-xs text-indigo-200">{card.cvv}</span>
-                    </div>
-                    <button
-                      onClick={() => handleCopy(card.cvv, setCopiedCvv)}
-                      className="p-1.5 rounded bg-indigo-500/10 hover:bg-indigo-500/25 border border-indigo-500/20 text-indigo-300 hover:text-white transition-all cursor-pointer"
-                    >
-                      {copiedCvv ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={handleCopyAll}
-                    className="w-full py-2 bg-indigo-600/10 hover:bg-indigo-600/20 border border-indigo-500/20 text-indigo-400 rounded-xl text-xs font-semibold tracking-wide transition-all cursor-pointer flex items-center justify-center gap-1.5 mt-2"
-                  >
-                    {copiedAll ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedAll ? 'Copiado!' : 'Copiar Bloco Inteiro'}</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="border border-white/5 bg-white/5 rounded-xl p-4 flex items-start gap-3 text-xs text-gray-500 h-full justify-center flex-col">
-                  <ShieldAlert className="w-5 h-5 text-gray-500 shrink-0" />
-                  <span>Escolha uma bandeira e clique em &ldquo;Gerar Cartão Válido&rdquo;. Os dados do cartão simulado aparecerão aqui.</span>
-                </div>
-              )}
-            </div>
-
           </div>
-        </div>
 
+          {/* Dados Individuais */}
+          <Panel title="Dados para Cópia" className="md:col-span-2 justify-between gap-3">
+            {card ? (
+              <div className="space-y-2.5 flex-1 flex flex-col justify-between">
+                <div className="space-y-2">
+                  {[
+                    {
+                      label: 'NÚMERO',
+                      value: card.number,
+                      copied: copiedNumber,
+                      onCopy: () => handleCopy(card.number, setCopiedNumber),
+                    },
+                    {
+                      label: 'VALIDADE',
+                      value: card.expiry,
+                      copied: copiedExpiry,
+                      onCopy: () => handleCopy(card.expiry, setCopiedExpiry),
+                    },
+                    {
+                      label: 'CVV',
+                      value: card.cvv,
+                      copied: copiedCvv,
+                      onCopy: () => handleCopy(card.cvv, setCopiedCvv),
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      className="bg-theme-inset border border-theme-border rounded-md px-3 py-2 flex items-center justify-between gap-2"
+                    >
+                      <div className="min-w-0">
+                        <span className="font-mono text-[9px] text-theme-text-subtle font-semibold block">
+                          {item.label}
+                        </span>
+                        <span className="font-mono text-xs font-medium text-theme-text truncate block">
+                          {item.value}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={item.onCopy}
+                        className={`p-1.5 rounded border transition-colors cursor-pointer shrink-0 ${
+                          item.copied
+                            ? 'bg-theme-success-bg border-theme-success-border text-theme-success'
+                            : 'bg-theme-card border-theme-border hover:border-theme-border-strong text-theme-text-muted hover:text-theme-text'
+                        }`}
+                        title={`Copiar ${item.label.toLowerCase()}`}
+                      >
+                        {item.copied ? (
+                          <Check className="w-3.5 h-3.5" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <Button variant="secondary" size="sm" fullWidth onClick={handleCopyAll}>
+                  {copiedAll ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-theme-success" />
+                      <span>Bloco copiado</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copiar bloco inteiro</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-center text-xs text-theme-text-subtle py-6">
+                Selecione uma bandeira e clique em &ldquo;Gerar Cartão Válido&rdquo;.
+              </div>
+            )}
+          </Panel>
+        </div>
       </div>
     </div>
   );

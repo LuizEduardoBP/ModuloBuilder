@@ -1,6 +1,17 @@
 import React from 'react';
 import { genericUseTool } from './genericUseTool';
-import { Copy, Check, RotateCcw, FileText, Binary, RefreshCw } from 'lucide-react';
+import { Copy, Check, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import { ToolHeader } from '../../../components/ui/ToolHeader';
+import { Panel } from '../../../components/ui/Panel';
+import { Button } from '../../../components/ui/Button';
+import { SegmentedControl } from '../../../components/ui/SegmentedControl';
+import { ToggleSwitch } from '../../../components/ui/ToggleSwitch';
+
+const MODE_OPTIONS = [
+  { value: 'base64-encode', label: 'Base64 Encode' },
+  { value: 'base64-decode', label: 'Base64 Decode' },
+  { value: 'reverse', label: 'Inverter Texto' },
+] as const;
 
 export const genericToolComponent: React.FC<{ onBack?: () => void }> = () => {
   const {
@@ -18,206 +29,146 @@ export const genericToolComponent: React.FC<{ onBack?: () => void }> = () => {
     handleCopy,
     handleClear,
     handleTrimChange,
-    handleUppercaseChange
+    handleUppercaseChange,
   } = genericUseTool();
 
   return (
     <div className="space-y-6">
-      {/* Header do Módulo */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-4 gap-4">
-        <div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
-            <Binary className="w-7 h-7 text-indigo-400" />
-            Utils de Texto & Base64
-          </h2>
-          <p className="text-gray-400 text-sm mt-1">
-            Módulo plug-and-play para codificação, decodificação e análise de strings em tempo real.
-          </p>
-        </div>
+      <ToolHeader
+        icon="Binary"
+        title="Utils de Texto & Base64"
+        description="Codificação e decodificação Base64 com suporte UTF-8, inversão de strings e métricas em tempo real."
+        actions={
+          <>
+            <Button variant="secondary" size="sm" onClick={handleClear}>
+              <RotateCcw className="w-3.5 h-3.5" />
+              Limpar
+            </Button>
+            <Button
+              variant={showAdvanced ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              Ajustes
+            </Button>
+          </>
+        }
+      />
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <button
-            onClick={handleClear}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-3 py-1.5 text-sm bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-gray-300 hover:text-white transition-all cursor-pointer"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Limpar
-          </button>
-          <button
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-3 py-1.5 text-sm border rounded-lg transition-all cursor-pointer ${
-              showAdvanced
-                ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/30'
-                : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
-            }`}
-          >
-            <RefreshCw className={`w-4 h-4 ${showAdvanced ? 'rotate-180' : ''} transition-transform duration-300`} />
-            Opções Avançadas
-          </button>
-        </div>
-      </div>
-
-      {/* Grid Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Painel Esquerdo: Entrada/Saída */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Seletor de Modo */}
-          <div className="grid grid-cols-3 gap-2 bg-black/40 p-1.5 rounded-xl border border-white/5">
-            <button
-              onClick={() => handleModeChange('base64-encode')}
-              className={`py-2 px-3 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-                mode === 'base64-encode'
-                  ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              Base64 Encode
-            </button>
-            <button
-              onClick={() => handleModeChange('base64-decode')}
-              className={`py-2 px-3 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-                mode === 'base64-decode'
-                  ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              Base64 Decode
-            </button>
-            <button
-              onClick={() => handleModeChange('reverse')}
-              className={`py-2 px-3 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-                mode === 'reverse'
-                  ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              Inverter Texto
-            </button>
-          </div>
+        <div className="lg:col-span-2 space-y-5">
+          <SegmentedControl
+            options={MODE_OPTIONS}
+            value={mode}
+            onChange={handleModeChange}
+            className="w-full sm:w-auto"
+          />
 
           {/* Área de Entrada */}
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl blur opacity-10 group-focus-within:opacity-20 transition duration-300"></div>
-            <div className="relative bg-zinc-900/90 border border-white/10 rounded-xl overflow-hidden focus-within:border-indigo-500/50 transition-all">
-              <div className="flex justify-between items-center bg-white/5 px-4 py-2 border-b border-white/5 text-xs text-gray-400 font-medium">
-                <span>TEXTO DE ENTRADA</span>
-                <span className="flex items-center gap-1 text-indigo-400">
-                  <FileText className="w-3 h-3" />
-                  {stats.chars} caracteres
-                </span>
-              </div>
-              <textarea
-                value={inputText}
-                onChange={handleTextChange}
-                placeholder="Cole ou digite seu texto aqui..."
-                rows={5}
-                className="w-full bg-transparent px-4 py-3 text-white placeholder-gray-500 focus:outline-none resize-y text-sm font-mono"
-              />
+          <div className="bg-theme-card border border-theme-border rounded-lg overflow-hidden focus-within:border-theme-brand transition-colors">
+            <div className="flex justify-between items-center bg-theme-inset px-4 py-2 border-b border-theme-border text-xs text-theme-text-muted font-medium">
+              <span className="font-mono uppercase tracking-wider text-[11px]">
+                Texto de Entrada
+              </span>
+              <span className="font-mono text-[11px] text-theme-text-subtle">
+                {stats.chars} caracteres
+              </span>
             </div>
+            <textarea
+              value={inputText}
+              onChange={handleTextChange}
+              placeholder="Cole ou digite seu texto aqui..."
+              rows={5}
+              className="w-full bg-transparent px-4 py-3 text-theme-text placeholder-theme-text-subtle focus:outline-none resize-y text-sm font-mono"
+            />
           </div>
 
           {/* Área de Saída */}
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-10 transition duration-300"></div>
-            <div className="relative bg-zinc-900/90 border border-white/10 rounded-xl overflow-hidden">
-              <div className="flex justify-between items-center bg-white/5 px-4 py-2 border-b border-white/5 text-xs text-gray-400 font-medium">
-                <span>TEXTO PROCESSADO</span>
-                {outputText && (
-                  <button
-                    onClick={handleCopy}
-                    className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-indigo-200 transition-all cursor-pointer text-[11px] border border-indigo-500/20"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="w-3 h-3 text-emerald-400" />
-                        <span className="text-emerald-400">Copiado!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3" />
-                        <span>Copiar Saída</span>
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
-              <textarea
-                value={outputText}
-                readOnly
-                placeholder="O resultado aparecerá aqui em tempo real..."
-                rows={5}
-                className="w-full bg-transparent px-4 py-3 text-indigo-200/90 placeholder-gray-600 focus:outline-none resize-y text-sm font-mono"
-              />
+          <div className="bg-theme-card border border-theme-border rounded-lg overflow-hidden">
+            <div className="flex justify-between items-center bg-theme-inset px-4 py-2 border-b border-theme-border text-xs text-theme-text-muted font-medium">
+              <span className="font-mono uppercase tracking-wider text-[11px]">
+                Texto Processado
+              </span>
+              {outputText && (
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium border transition-colors cursor-pointer ${
+                    copied
+                      ? 'bg-theme-success-bg border-theme-success-border text-theme-success'
+                      : 'bg-theme-card border-theme-border hover:border-theme-border-strong text-theme-text-muted hover:text-theme-text'
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3 h-3" />
+                      <span>Copiado</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" />
+                      <span>Copiar</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
+            <textarea
+              value={outputText}
+              readOnly
+              placeholder="O resultado aparecerá aqui em tempo real..."
+              rows={5}
+              className="w-full bg-theme-inset/40 px-4 py-3 text-theme-text placeholder-theme-text-subtle focus:outline-none resize-y text-sm font-mono"
+            />
           </div>
         </div>
 
         {/* Painel Direito: Estatísticas & Opções Avançadas */}
-        <div className="space-y-6">
-          {/* Métricas Rápidas */}
-          <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-white tracking-wider uppercase flex items-center gap-2">
-              <FileText className="w-4 h-4 text-gray-400" />
-              Estatísticas
-            </h3>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
-                <span className="block text-xl font-bold text-white">{stats.chars}</span>
-                <span className="text-[10px] text-gray-400">Caracteres</span>
+        <div className="space-y-5">
+          <Panel title="Estatísticas">
+            <div className="grid grid-cols-3 gap-2.5">
+              <div className="bg-theme-inset p-3 rounded-md border border-theme-border text-center">
+                <span className="block font-mono text-lg font-bold text-theme-text">
+                  {stats.chars}
+                </span>
+                <span className="text-[11px] text-theme-text-muted">Caracteres</span>
               </div>
-              <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
-                <span className="block text-xl font-bold text-white">{stats.words}</span>
-                <span className="text-[10px] text-gray-400">Palavras</span>
+              <div className="bg-theme-inset p-3 rounded-md border border-theme-border text-center">
+                <span className="block font-mono text-lg font-bold text-theme-text">
+                  {stats.words}
+                </span>
+                <span className="text-[11px] text-theme-text-muted">Palavras</span>
               </div>
-              <div className="bg-white/5 p-3 rounded-lg border border-white/5 text-center">
-                <span className="block text-xl font-bold text-white">{stats.lines}</span>
-                <span className="text-[10px] text-gray-400">Linhas</span>
+              <div className="bg-theme-inset p-3 rounded-md border border-theme-border text-center">
+                <span className="block font-mono text-lg font-bold text-theme-text">
+                  {stats.lines}
+                </span>
+                <span className="text-[11px] text-theme-text-muted">Linhas</span>
               </div>
             </div>
-          </div>
+          </Panel>
 
-          {/* Opções Avançadas */}
           {showAdvanced && (
-            <div className="bg-zinc-900/50 border border-indigo-500/10 rounded-xl p-4 space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
-              <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                <h3 className="text-sm font-semibold text-white tracking-wider uppercase flex items-center gap-2">
-                  <RefreshCw className="w-4 h-4 text-indigo-400" />
-                  Parâmetros de Ajuste
-                </h3>
+            <Panel title="Parâmetros de Ajuste" className="space-y-4">
+              <ToggleSwitch
+                checked={autoTrim}
+                onChange={handleTrimChange}
+                label="Auto Trim"
+                description="Remove espaços nas pontas"
+              />
+              <div className="border-t border-theme-border pt-3">
+                <ToggleSwitch
+                  checked={outputUppercase}
+                  onChange={handleUppercaseChange}
+                  label="Caixa alta"
+                  description="Força saída em maiúsculas"
+                />
               </div>
-
-              <div className="space-y-3 text-sm">
-                <label className="flex items-center justify-between p-2.5 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                  <div className="flex flex-col">
-                    <span className="text-gray-200 font-medium">Auto Trim</span>
-                    <span className="text-xs text-gray-400">Remove espaços em branco nas pontas</span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={autoTrim}
-                    onChange={(e) => handleTrimChange(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-gray-900"
-                  />
-                </label>
-
-                <label className="flex items-center justify-between p-2.5 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer">
-                  <div className="flex flex-col">
-                    <span className="text-gray-200 font-medium">LETRAS MAIÚSCULAS</span>
-                    <span className="text-xs text-gray-400">Força a saída em caixa alta</span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={outputUppercase}
-                    onChange={(e) => handleUppercaseChange(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-gray-900"
-                  />
-                </label>
-              </div>
-            </div>
+            </Panel>
           )}
         </div>
-
       </div>
     </div>
   );
