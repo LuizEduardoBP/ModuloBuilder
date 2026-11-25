@@ -1,5 +1,3 @@
-import React from 'react';
-
 export interface SegmentOption<T extends string> {
   value: T;
   label: string;
